@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import * as echarts from "echarts";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { useDashboard } from "@/stores/dashboard";
 
+const store = useDashboard();
 const chartRef = ref<HTMLDivElement>();
 let chart: echarts.ECharts | null = null;
+
+const depts = store.deptBarData.departments;
 
 const option: echarts.EChartsOption = {
   tooltip: {
@@ -130,8 +134,27 @@ onMounted(() => {
   chart = echarts.init(chartRef.value);
   chart.setOption(option);
 
+  // 点击科室 → 全局联动
+  chart.on("click", (params: { name?: string }) => {
+    if (params.name) {
+      store.selectDept(store.selectedDept === params.name ? null : params.name);
+    }
+  });
+
   resizeObserver = new ResizeObserver(() => chart?.resize());
   resizeObserver.observe(chartRef.value);
+});
+
+// 联动高亮
+watch(() => store.selectedDept, (dept) => {
+  chart?.dispatchAction({ type: "downplay", seriesIndex: 0 });
+  if (dept) {
+    for (let i = 0; i < depts.length; i++) {
+      if (depts[i] === dept) {
+        chart?.dispatchAction({ type: "highlight", seriesIndex: 0, dataIndex: i });
+      }
+    }
+  }
 });
 
 onUnmounted(() => {

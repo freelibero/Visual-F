@@ -1,27 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
+import { useDashboard } from "@/stores/dashboard";
 
-interface PatientRow {
-  id: string;
-  name: string;
-  dept: string;
-  status: "候诊中" | "叫号中" | "已过号";
-}
-
-const rows: PatientRow[] = [
-  { id: "1", name: "张伟", dept: "心内科", status: "候诊中" },
-  { id: "2", name: "李芳", dept: "神经内科", status: "候诊中" },
-  { id: "3", name: "王建国", dept: "内分泌科", status: "叫号中" },
-  { id: "4", name: "赵敏", dept: "心内科", status: "候诊中" },
-  { id: "5", name: "刘洋", dept: "呼吸科", status: "候诊中" },
-  { id: "6", name: "陈静", dept: "消化科", status: "已过号" },
-  { id: "7", name: "杨磊", dept: "骨科", status: "候诊中" },
-  { id: "8", name: "周婷", dept: "心内科", status: "候诊中" },
-  { id: "9", name: "吴昊", dept: "神经内科", status: "叫号中" },
-  { id: "10", name: "许慧", dept: "内分泌科", status: "候诊中" },
-  { id: "11", name: "何强", dept: "呼吸科", status: "候诊中" },
-  { id: "12", name: "宋丽", dept: "骨科", status: "候诊中" },
-];
+const store = useDashboard();
+const rows = store.waitingList;
 
 const statusClass = (status: string) => {
   if (status === "叫号中") return "status-calling";

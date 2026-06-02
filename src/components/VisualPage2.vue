@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useDashboard } from "@/stores/dashboard";
 
-const total = 680;
+const store = useDashboard();
+const total = store.bedData.total;
 const used = ref(0);
-const target = 578;
+const target = store.bedData.used;
+const depts = store.bedData.depts;
 
+// 数字滚动动画
 onMounted(() => {
   let c = 0;
   const step = Math.ceil(target / 40);
@@ -14,14 +18,6 @@ onMounted(() => {
     used.value = c;
   }, 30);
 });
-
-const depts = [
-  { name: "ICU", used: 28, total: 32, alert: true },
-  { name: "心内科", used: 45, total: 52, alert: false },
-  { name: "骨科", used: 38, total: 48, alert: false },
-  { name: "妇产科", used: 22, total: 35, alert: false },
-  { name: "儿科", used: 18, total: 30, alert: false },
-];
 
 const rateStyle = (u: number, t: number) => {
   const r = Math.round((u / t) * 100);
